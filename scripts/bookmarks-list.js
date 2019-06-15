@@ -2,23 +2,9 @@
 
 /* global $, api, store */
 
-// this event listener makes the box under my testing title slide down
-// const bookmarkList = (function() {
 const bookmarkList = (function () { 
 
   function createBookmarkElement(bookmark) {
-    if(bookmark.expandCheckedItem) {
-      let bookmarkView = `
-        <span class="box">
-          <div class="bookmark-url">
-            ${bookmark.url}
-          </div>
-          <div class="bookmark-description">
-            ${bookmark.description}
-          </div>
-       </span>
-        `;
-    } 
 
     function serializeJson(form) {
       const formData = new FormData(form);
@@ -93,15 +79,9 @@ const bookmarkList = (function () {
   }
 
   function render() {
-  // uncomment next line once have renderError function 
-  // renderError();
+    renderError();
     let bookmarks = [...store.bookmarks];
-    // create if statement to toggle view for min rating filter
-    // if ()
-    // this if statement should toggle the expanded and collapsed view of each bookmark
-    // don't think any of this belongs here
     if(store.expandCheckedItem) {
-    // might need to change wording from item.checked to item.clicked; not sure yet
       bookmarks = bookmarks.filter(item => !item.expanded);
     }
     const bookmarkListString = createBookmarkItemString(bookmarks);
@@ -147,8 +127,7 @@ const bookmarkList = (function () {
   
   function handleDeleteClicked() {
     $('.bookmark-element-delete').on('click', event => {
-      // const id = getBookmarkIdFromElement(event.currentTarget);
-      // console.log(id);
+      const id = getBookmarkIdFromElement(event.currentTarget);
       console.log(event.currentTarget);
       api.deleteBookmark(id)
         .then(() => {
