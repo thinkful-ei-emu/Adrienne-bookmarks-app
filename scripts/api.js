@@ -1,24 +1,47 @@
 'use strict';
+/* global $ */
 
 let api = (function () {
   // put in my name for right now like says at top of API page, but might need to change
-  const BASE_URL = 'https://thinkful-list-api.herokuapp.com/Adrienne';
+  const BASE_URL = 'https://thinkful-list-api.herokuapp.com/Adrienne/bookmarks';
+
+  // let listApiFetch = function(...args) {
+  //   let error;
+  //   return fetch(...args)
+  //     .then(res => {
+  //       if (!res.ok) {
+  //         error = {code: res.status};
+  //         if (!res.headers.get('content-type').includes('json')) {
+  //           error.message = res.statusText;
+  //           return Promise.reject(error);
+  //         }
+  //       }
+  //       return res.json();
+  //     })
+  //     .then(data => {
+  //       if (error) {
+  //         error.message = data.message;
+  //         return Promise.reject(error);
+  //       }
+  //       return data;
+  //     });
+  // };
 
   // function for getting bookmarks
   const getBookmarks = function() {
-    return fetch(`${BASE_URL}/bookmarks`);
+    return fetch(`${BASE_URL}`);
   };
 
   // function for creating bookmark
-  const createBookmark = function() {
+  const createBookmark = function(title, url, description, rating) {
     let newBookmark = JSON.stringify({
-      // why is name ok but rest of properties in object are not?
-      name,
+      // should be linking with form fields and is not
+      title,
       url,
-      rating,
-      description
+      description,
+      rating
     });
-    return fetch(`${BASE_URL}/bookmarks`, {
+    return fetch(`${BASE_URL}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -27,20 +50,10 @@ let api = (function () {
     });
   };
 
-  // function for editing bookmark
-  const editBookmark = function(id, updateData) {
-    return fetch(`${BASE_URL}/bookmarks/${id}`, {
-      method: 'PATCH',
-      header: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(updateData)
-    });
-  };
 
   // function for deleting bookmark
   const deleteBookmark = function(id) {
-    return fetch(`${BASE_URL}/bookmarks/${id}`, {
+    return fetch(`${BASE_URL}/${id}`, {
       method: 'DELETE'
     });
   };
@@ -49,7 +62,6 @@ let api = (function () {
   return {
     getBookmarks,
     createBookmark,
-    editBookmark,
     deleteBookmark
   };
 }());

@@ -1,46 +1,42 @@
 'use strict';
-/**
-  * Mapped Out State Object for Opening page
-  * 
-  * {bookmarks:[], adding: false, filtering: false}
-  * 
-*/
 
-/**
-  * Mapped Out State Object for Adding New Bookmark and Error Handling
-  * 
-  * {bookmarks: [...], adding: true, filtering: false, error: 'error message'}
-  * 
-*/
+// eslint-disable-next-line no-unused-vars
+const store = (function() {
+  const setError = function(error) {
+    this.error = error;
+  };
 
-/**
-  * Mapped out state object for Expanding Bookmark
-  * 
-  * { bookmarks: [{id: 1, title: 'Bookmark 1', rating: 3, expanded: true, editing: false}], 
-  * adding: false, filtering: false}
-  * 
-*/
+  const addBookmark = function(item) {
+    this.bookmarks.push(item);
+  };
 
-/**
-  * Mapped out state object for Editing Bookmark
-  * 
-  * {bookmarks: [{id: 1, title: 'Bookmark 1', rating: 3, expanded: false, editing: true},
-  * adding: false, filtering: false]}
-  * 
- */
+  const findById = function(id) {
+    return this.bookmarks.find(item => item.id === id);
+  };
 
-/**
-  * Mapped out state object for Deleting Bookmark
-  * 
-  * {bookmarks: [], adding: false, editing: false }
-  * 
-*/
+  const findAndDelete = function(id) {
+    this.bookmarks = this.bookmarks.filter(bookmark => bookmark.id !== id);
+  };
 
-/**
-  * Mapped out state object for Rating Filter
-  * 
-  * {bookmarks: [{id: 1, title: 'Bookmark 1', rating: 3, expanded: false},
-  * {id: 4, title: 'Bookmark 4', rating: 3, expanded: false}], 
-  * adding: false, filtering: 3}
-  * 
-*/
+  const filterByMin = function() {
+    // code to make the filter selector work
+  };
+
+  const toggleExpandedView = function() {
+    this.expandCheckedItem = !this.expandCheckedItem;
+  };
+
+  return {
+    bookmarks: [],
+    setError,
+    error: null,
+    addBookmark,
+    adding: false,
+    findById,
+    findAndDelete,
+    filterByMin,
+    filtering: true,
+    toggleExpandedView,
+    expandCheckedItem: false
+  };
+}());

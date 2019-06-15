@@ -8,29 +8,50 @@
   <link rel="stylesheet" href="style/index.css">
 </head>
 <body>
-  <h1>Bookmarks</h1>
-  <button type="submit" class="add-bookmark">Add Bookmark</button>
-  <select id="min-rating">
-    <option value="">Minimum Rating</option>
-    <option value="1-star">1 Star</option>
-    <option value="2-star">2 Stars</option>
-    <option value="3-star">3 Stars</option>
-    <option value="4-star">4 Stas</option>
-    <option value="5-star">5 Stars</option>
+
+  <button type="submit" id="add-bookmark" class="js-add-bookmark">Add Bookmark</button>
+  <select class="min-rating-filter">
+    <option value="0">Minimum Rating</option>
+    <option value="1">1 Star</option>
+    <option value="2">2 Stars</option>
+    <option value="3">3 Stars</option>
+    <option value="4">4 Stars</option>
+    <option value="5">5 Stars</option>
   </select>
-  
-  <!-- This will become a template in javascript -->
-  <!-- <form class="adding-bookmark">
-    <input class="bookmark-name" placeholder="Bookmark Name">
-    <input class="bookmark-url" placeholder="URL">
-    <input class="bookmark-description" placeholder="Add Description">
-    <button type ="submit" class="new-bookmark">Create Bookmark</button>
-    <Need rating options in this form as well
-  </form> -->
-  <!-- need to load in jquery script -->
-  <script type="text/javascript" src="scripts/api.js"></script>
-  <script type="text/javascript" src="scripts/store.js"></script>
-  <script type="text/javascript" src="scripts/bookmarks.js"></script>
-  <script type="text/javascript" src="scripts/index.js"></script>
+
+  <form id="adding-bookmark-form" class="js-adding-bookmark" action='#' hidden>
+    <div>
+      <label for="title">Bookmark Name</label>
+      <input type="text" name="title" class="bookmark-title js-bookmark-entry">
+    </div>
+    <div>
+      <label for="url">URL</label>
+      <input type="text" name="url" class="bookmark-url js-bookmark-entry">
+    </div>
+    <div>
+      <label for="description">Description</label>
+      <textarea id="description" name="description" class="bookmark-description js-bookmark-entry" rows="5" cols="33"></textarea>
+    </div>
+    <div>
+      <label for="rating">Rating</label>
+        <input type="radio" name="rating" value="1" class="bookmark-rating js-bookmark-entry" checked>1 Star<br>
+        <input type="radio" name="rating" value="2" class="bookmark-rating js-bookmark-entry">2 Stars<br>
+        <input type="radio" name="rating" value="3" class="bookmark-rating js-bookmark-entry">3 Stars<br>
+        <input type="radio" name="rating" value="4" class="bookmark-rating js-bookmark-entry">4 Stars<br>
+        <input type="radio" name="rating" value="5" class="bookmark-rating js-bookmark-entry">5 Stars<br>
+    </div>
+    <div>
+      <button id="create-bookmark-button" type ="submit" class="new-bookmark" name="createBookmark">Create Bookmark</button>
+    </div>
+  </form>
+<ul id="js-bookmark-list">
+</ul>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/cuid/1.3.8/browser-cuid.min.js"></script>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="scripts/bookmark-item.js"></script>  
+  <script type="text/javascript" src="scripts/store.js"></script>  
+  <script type="text/javascript" src="scripts/bookmarks-list.js"></script>  
+  <script type="text/javascript" src="scripts/api.js"></script>  
+  <script type="text/javascript" src="scripts/index.js"></script>  
 </body>
 </html>
