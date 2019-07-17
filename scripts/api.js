@@ -1,47 +1,45 @@
-'use strict';
 /* global $ */
 
+// eslint-disable-next-line no-unused-vars
 let api = (function () {
-  // put in my name for right now like says at top of API page, but might need to change
-  const BASE_URL = 'https://thinkful-list-api.herokuapp.com/Adrienne/bookmarks';
 
-  // let listApiFetch = function(...args) {
-  //   let error;
-  //   return fetch(...args)
-  //     .then(res => {
-  //       if (!res.ok) {
-  //         error = {code: res.status};
-  //         if (!res.headers.get('content-type').includes('json')) {
-  //           error.message = res.statusText;
-  //           return Promise.reject(error);
-  //         }
-  //       }
-  //       return res.json();
-  //     })
-  //     .then(data => {
-  //       if (error) {
-  //         error.message = data.message;
-  //         return Promise.reject(error);
-  //       }
-  //       return data;
-  //     });
-  // };
-
+  
+  let listApiFetch = function(...args) {
+    let error;
+    return fetch(...args)
+      .then(res => {
+        if (!res.ok) {
+          error = {code: res.status};
+          if (!res.headers.get('content-type').includes('json')) {
+            error.message = res.statusText;
+            return Promise.reject(error);
+          }
+        }
+        return res.json();
+      })
+      .then(data => {
+        if (error) {
+          error.message = data.message;
+          return Promise.reject(error);
+        }
+        return data;
+      });
+  };
+  const BASE_URL = 'https://thinkful-list-api.herokuapp.com/Adrienne/';
   // function for getting bookmarks
   const getBookmarks = function() {
-    return fetch(`${BASE_URL}`);
+    return listApiFetch(`${BASE_URL}bookmarks`);
   };
 
   // function for creating bookmark
-  const createBookmark = function(title, url, description, rating) {
+  const createBookmark = function(title, url, desc, rating) {
     let newBookmark = JSON.stringify({
-      // should be linking with form fields and is not
       title,
       url,
-      description,
+      desc,
       rating
     });
-    return fetch(`${BASE_URL}`, {
+    return listApiFetch(`${BASE_URL}bookmarks`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -53,12 +51,11 @@ let api = (function () {
 
   // function for deleting bookmark
   const deleteBookmark = function(id) {
-    return fetch(`${BASE_URL}/${id}`, {
+    return listApiFetch(`${BASE_URL}bookmarks/${id}`, {
       method: 'DELETE'
     });
   };
 
-  // return above functions inside an object
   return {
     getBookmarks,
     createBookmark,

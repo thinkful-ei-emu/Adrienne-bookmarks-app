@@ -1,72 +1,54 @@
-'use strict';
-
 /* global $, api, store */
 
-const bookmarkList = (function () { 
+const bookmarkList = (function() { 
 
   function createBookmarkElement(bookmark) {
-
-    function serializeJson(form) {
-      const formData = new FormData(form);
-      const obj = {};
-      formData.forEach((val, name) => obj[name] = val);
-      return JSON.stringify(obj);
-    }
-    
-    $('#adding-bookmark-form').submit(event => {
-      event.preventDefault();
-      // These two lines are THE SAME
-      let formElement = document.querySelector('#adding-bookmark-form');
-      // let formElement = $('#adding-bookmark-form')[0];
-      // the [0] here selects the native element
-      console.log(serializeJson(formElement));
-
-      render();
-    });
-
     return `
-    <li class="js-bookmark-element" data-item-id="${bookmark.id}">
-      <span class="collapsed-bookmark">
-        <div class="bookmark-toggle">${bookmark.title}</div>
-        <div class="bookmark-rating">${bookmark.rating}</div>
-        <span class="box">
-        <div class="bookmark-url"> 
-          <a href="${bookmark.url}">
-            Visit site
-          </a>
-        </div>
-        <div class="bookmark-description">
-          ${bookmark.description}
-        </div>
-     </span>
-       <button class="bookmark-element-delete">Delete</delete>
+    <li class="js-bookmark-element" data-id="${bookmark.id}">
+      <span class="collapsed-bookmark col-4">
+        <div class="bookmark-toggle bookmark-title">${bookmark.title}</div>
+        <div class="bookmark-rating">${bookmark.rating} Stars</div>
+        <span class="box" hidden>
+          <div class="bookmark-url"> 
+            <a href="${bookmark.url}">
+              Visit site
+            </a>
+          </div>
+          <div class="bookmark-description">
+            ${bookmark.desc}
+          </div>
+          <button class="bookmark-element-delete" id="${bookmark.id}">Delete</delete>
+        </span>
       </span>
     </li>
   `;
   }
 
   function handleBookmarkExpand() {
-    $('#js-bookmark-list').on('click', '.bookmark-toggle', function(){
-      if($('.box').is(':hidden')) {
-        $('.box').slideDown('slow');
+    $(document).on('click', '.js-bookmark-element', function(){
+      event.preventDefault();
+      let box = $(this).children()[0];
+      if($(box.lastChild).prop('hidden')) {
+        $(box.lastChild).prop('hidden', false);
+        $(box.lastChild).slideDown('slow');
       } else {
-        $('.box').slideUp();
+        $(box.lastChild).prop('hidden', true);
+        $(box.lastChild).slideUp();
       }
     });
   }
 
-  function getBookmarkIdFromElement(bookmark) {
-    return $(bookmark)
-      .closest('.js-bookmark-element')
-      .data('item-id');
-  }
-
-  // this event listener makes the form slide down when add bookmark is clicked
   function handleFormExposed() {
     $('#add-bookmark').click(function() {
       if($('.js-adding-bookmark').is(':hidden')) {
         $('.js-adding-bookmark').slideDown('slow');
-      } else {
+      }
+    });
+  }
+
+  function handleFormClose() {
+    $('#close-form').click(function() {
+      if($('.js-adding-bookmark').is(':visible')) {
         $('.js-adding-bookmark').slideUp();
       }
     });
@@ -74,8 +56,30 @@ const bookmarkList = (function () {
 
   function createBookmarkItemString(bookmarkList) {
     const items = bookmarkList.map((bookmark) => createBookmarkElement(bookmark));
-    // console.log(items);
     return items.join('');
+  }
+
+  function createError(message) {
+    return `
+        <button id="close-error">X</button>
+        <p>${message}</p>
+    `;
+  }
+
+  function renderError() {
+    if (store.error) {
+      const genErr = createError(store.error);
+      $('.error-container').html(genErr);
+    } else {
+      $('.error-container').empty();
+    }
+  }
+
+  function handleCloseError() {
+    $('.error-container').on('click', '#close-error', function() {
+      store.setError(null);
+      renderError();
+    });
   }
 
   function render() {
@@ -86,34 +90,20 @@ const bookmarkList = (function () {
     }
     const bookmarkListString = createBookmarkItemString(bookmarks);
 
-    $('#js-bookmark-list').html(bookmarkListString);
+    $('.js-bookmark-list').html(bookmarkListString);
   }
 
-  function createError(message) {
-    return `
-    <section class="error-message">
-      <button id="close-error>X</button>
-      <p>${message}</p>
-    </section>
-    `;
-  }
-
-  function renderError() {
-    if (store.error) {
-      const genErr = createError(store.error);
-      $('.error-message').html(genErr);
-    } else {
-      $('.error-message').empty();
-    }
-  }
-
-  // listens for create bookmark to be clicked; will hopefully submit form data and add data to the bookmarks list
   function handleCreateBookmarkSubmit() {
     $('#adding-bookmark-form').submit(function(event) {
       event.preventDefault();
-      const newBookmark = $('.js-bookmark-entry').val();
-      $('.js-bookmark-entry').val('');
-      api.createBookmark(newBookmark)
+      const newBookmark = $('.bookmark-title').val();
+      const newBookmarkUrl = $('.bookmark-url').val();
+      const newBookmarkDescription = $('.bookmark-description').val();
+      const newBookmarkRating = $('input[name=\'rating\']:checked'). val();
+      $('.bookmark-title').val('');
+      $('.bookmark-url').val('');
+      $('.bookmark-description').val('');
+      api.createBookmark(newBookmark, newBookmarkUrl, newBookmarkDescription, newBookmarkRating) 
         .then((bookmarks) => {
           store.addBookmark(bookmarks);
           render();
@@ -122,34 +112,44 @@ const bookmarkList = (function () {
           store.setError(err.message);
           renderError();
         });
+      document.getElementById('1-star').checked = true;
     });
   }
   
   function handleDeleteClicked() {
-    $('.bookmark-element-delete').on('click', event => {
-      const id = getBookmarkIdFromElement(event.currentTarget);
-      console.log(event.currentTarget);
+    $('.js-bookmark-list').on('click','.bookmark-element-delete', event => {
+      event.preventDefault();
+      const id = event.currentTarget.id;
       api.deleteBookmark(id)
         .then(() => {
           store.findAndDelete(id);
           render();
         })
         .catch(err => {
-          console.log(err);
-          store.setError(err.message);
-          renderError();
+          store.setError(`Unable to delete. ${err.message}`);
+          render();
         });
+    });
+  }
+  
+  function handleFilter() {
+    $('.min-rating-filter').on('change', event => {
+      event.preventDefault();
+      store.filterByMin($('.min-rating-filter').val());
+      render();
     });
   }
 
   function bindEventListeners() {
     handleBookmarkExpand();
     handleFormExposed();
+    handleFormClose();
     handleCreateBookmarkSubmit();
     handleDeleteClicked();
+    handleFilter();
+    handleCloseError();
   }
-
-  // this return is the wrong color; should be purple
+  
   return {
     render: render,
     bindEventListeners: bindEventListeners,

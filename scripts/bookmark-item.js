@@ -1,4 +1,3 @@
-'use strict';
 /* global cuid */
 
 // eslint-disable-next-line no-unused-vars
@@ -7,7 +6,11 @@ const Bookmark = (function() {
     if(!name) throw new TypeError('Name must not be blank');
   };
 
-  const create = function(title, rating, description) {
+  const validateUrl = function(url) {
+    if(!url) throw new TypeError('URL must be full URL and is required');
+  };
+
+  const create = function(title, url, rating, description) {
     return {
       id: cuid(),
       title,
@@ -19,6 +22,7 @@ const Bookmark = (function() {
   };
   return {
     validateName,
+    validateUrl,
     create
   };
 }());

@@ -1,5 +1,3 @@
-'use strict';
-
 // eslint-disable-next-line no-unused-vars
 const store = (function() {
   const setError = function(error) {
@@ -18,25 +16,19 @@ const store = (function() {
     this.bookmarks = this.bookmarks.filter(bookmark => bookmark.id !== id);
   };
 
-  const filterByMin = function() {
-    // code to make the filter selector work
-  };
-
-  const toggleExpandedView = function() {
-    this.expandCheckedItem = !this.expandCheckedItem;
+  const filterByMin = function(filter) {
+    this.bookmarks = this.bookmarks.filter(bookmark => bookmark.rating >= filter);
   };
 
   return {
     bookmarks: [],
     setError,
-    error: null,
+    error: '',
     addBookmark,
     adding: false,
     findById,
     findAndDelete,
     filterByMin,
     filtering: true,
-    toggleExpandedView,
-    expandCheckedItem: false
   };
 }());
