@@ -5,24 +5,29 @@ const bookmarkList = (function() {
   function createBookmarkElement(bookmark) {
     return `
     <li class="js-bookmark-element" data-id="${bookmark.id}">
-      <span class="collapsed-bookmark col-4">
+      <span class="collapsed-bookmark">
         <div class="bookmark-toggle bookmark-title">${bookmark.title}</div>
         <div class="bookmark-rating">${bookmark.rating} Stars</div>
         <span class="box" hidden>
           <div class="bookmark-url"> 
-            <a href="${bookmark.url}">
+            <a href="${bookmark.url}" target="_blank">
               Visit site
             </a>
           </div>
           <div class="bookmark-description">
-            ${bookmark.desc}
+            <p>${bookmark.desc}</p>
           </div>
           <button class="bookmark-element-delete" id="${bookmark.id}">Delete</delete>
+          <button class="bookmark-element-close" id="${bookmark.id}">Close</close>
         </span>
       </span>
     </li>
   `;
   }
+
+  // line 13 link isnt opening unless right click on it 
+  // line 20 the closing tag is delete on accident, but if changed to button, the expand no longer works; same thing happened with close button
+  // tried to add a div around the buttons and that also broke the expanding of the bookmarks
 
   function handleBookmarkExpand() {
     $(document).on('click', '.js-bookmark-element', function(){
@@ -32,11 +37,28 @@ const bookmarkList = (function() {
         $(box.lastChild).prop('hidden', false);
         $(box.lastChild).slideDown('slow');
       } else {
-        $(box.lastChild).prop('hidden', true);
-        $(box.lastChild).slideUp();
+        // as is currently written this closes the last opened element (or elements) before pressing a close button not the specific element the close button is in
+        $('.js-bookmark-element').on('click', '.bookmark-element-close', function() {
+          event.preventDefault();
+          $(box.lastChild).prop('hidden', true);
+          $(box.lastChild).slideUp();
+        }); 
       }
     });
   }
+
+  // function handleBookmarkClose() {
+  //   $(document).on('click', '.bookmark-element-close', function(){
+  //     event.preventDefault();
+  //     let box = $('.js-bookmark-element').children()[0];
+  //     console.log(box);
+  //     console.log(box.lastChild);
+  //     // console.log(event.currentTarget);
+  //     if($(box.lastChild).prop('hidden', true)) {
+  //       $(box.lastChild).slideUp();
+  //     }
+  //   });
+  // }
 
   function handleFormExposed() {
     $('#add-bookmark').click(function() {
@@ -85,18 +107,32 @@ const bookmarkList = (function() {
   function render() {
     renderError();
     let bookmarks = [...store.bookmarks];
-    if(store.expandCheckedItem) {
-      bookmarks = bookmarks.filter(item => !item.expanded);
-    }
+    // if(store.expandCheckedItem) {
+    //   bookmarks = bookmarks.filter(item => !item.expanded);
+    // }
     const bookmarkListString = createBookmarkItemString(bookmarks);
 
     $('.js-bookmark-list').html(bookmarkListString);
   }
 
+  // function validation(reg) {
+  //   str = document.reg;
+  //   if (str.name.value.trim() == "") {
+  //       alert("Enter your name");
+  //       str.name.focus();
+  //       return false;
+  //   }
+
   function handleCreateBookmarkSubmit() {
     $('#adding-bookmark-form').submit(function(event) {
       event.preventDefault();
       const newBookmark = $('.bookmark-title').val();
+      // is this where the form validation would go?
+      if(newBookmark.trim() === '') {
+        // want to change so not an alert but goes through create and render error functions
+        alert('Name is not valid');
+        return false;
+      }
       const newBookmarkUrl = $('.bookmark-url').val();
       const newBookmarkDescription = $('.bookmark-description').val();
       const newBookmarkRating = $('input[name=\'rating\']:checked'). val();
@@ -142,6 +178,7 @@ const bookmarkList = (function() {
 
   function bindEventListeners() {
     handleBookmarkExpand();
+    // handleBookmarkClose();
     handleFormExposed();
     handleFormClose();
     handleCreateBookmarkSubmit();

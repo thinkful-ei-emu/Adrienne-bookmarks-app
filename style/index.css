@@ -54,6 +54,11 @@ form {
   text-align: center;
 }
 
+.bookmark-element-delete {
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
 .rating {
   padding: 10px 0;
 }
