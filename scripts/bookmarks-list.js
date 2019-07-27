@@ -25,10 +25,6 @@ const bookmarkList = (function() {
   `;
   }
 
-  // line 13 link isnt opening unless right click on it 
-  // line 20 the closing tag is delete on accident, but if changed to button, the expand no longer works; same thing happened with close button
-  // tried to add a div around the buttons and that also broke the expanding of the bookmarks
-
   function handleBookmarkExpand() {
     $('ul.js-bookmark-list').on('click', '.js-bookmark-element', function(){
       if($(event.target).is('a')) {
@@ -41,14 +37,6 @@ const bookmarkList = (function() {
         $(box[box.length - 1]).prop('hidden', false);
         $(box[box.length - 1]).slideDown('slow');
       } 
-      // else {
-      // as is currently written this closes the last opened element (or elements) before pressing a close button not the specific element the close button is in
-      // $('.js-bookmark-element').on('click', '.bookmark-element-close', function() {
-      //   event.preventDefault();
-      //   $(box.lastChild).prop('hidden', true);
-      //   $(box.lastChild).slideUp();
-      // }); 
-      // }
     });
   }
 
@@ -109,11 +97,7 @@ const bookmarkList = (function() {
   function render() {
     renderError();
     let bookmarks = [...store.bookmarks];
-    // if(store.expandCheckedItem) {
-    //   bookmarks = bookmarks.filter(item => !item.expanded);
-    // }
     const bookmarkListString = createBookmarkItemString(bookmarks);
-    console.log(bookmarkListString);
     $('.js-bookmark-list').html(bookmarkListString);
   }
 
